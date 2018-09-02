@@ -24,7 +24,29 @@ exports.serveAssets = function (res, asset, callback) {
   // css, or anything that doesn't change often.)
 
   //
+  if (asset === 'homePage') {
+    res.writeHead(200, exports.headers);
 
+    fs.readFile(__dirname + '/public/index.html', 'utf8', (err, data) => {
+      if (err) { throw err; }
+      var temp = '';
+      temp += data;
+      // res.write(temp)
+      res.end(temp);
+    });
+  }
+
+  if (asset === 'css') {
+    res.writeHead(200, { 'Content-Type': 'text/css' });
+
+    fs.readFile(__dirname + '/public/styles.css', 'utf8', (err, data) => {
+      if (err) { throw err; }
+      var temp = '';
+      temp += data;
+      // res.write(temp);
+      res.end(temp);
+    });
+  }
 };
 
 

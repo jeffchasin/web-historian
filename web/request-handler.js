@@ -18,17 +18,19 @@ exports.handleRequest = function (req, res) {
       response.end();
     }
 
+
     if (req.method.toUpperCase() === 'GET') {
       // if we're here, they want the home page
-      statusCode = 200;
-      res.writeHead(statusCode, httpHelpers.headers);
+      httpHelpers.serveAssets(res, 'homePage');
+      // statusCode = 200;
+      // res.writeHead(statusCode, httpHelpers.headers);
 
-      fs.readFile(__dirname + '/public/index.html', (err, data) => {
-        if (err) { throw err; }
-        var temp = '';
-        temp += data;
-        res.end(temp);
-      });
+      // fs.readFile(__dirname + '/public/index.html', (err, data) => {
+      //   if (err) { throw err; }
+      //   var temp = '';
+      //   temp += data;
+      //   res.end(temp);
+      // });
     }
 
     if (req.method.toUpperCase() === 'POST') {
@@ -40,11 +42,11 @@ exports.handleRequest = function (req, res) {
   } else if (req.url === archive.paths.archivedSites + '/site-name/') {
 
     // TODO: do stuff here
+  } else if (req.url === '/styles.css') {
+    httpHelpers.serveAssets(res, 'css');
   } else {
-    statusCode = 404;
-    res.writeHead(statusCode, httpHelpers.headers);
-    // TODO: make 404 page?
-    res.end();
+    res.writeHead(404, httpHelpers.headers);
+    res.end('404 Error: Sorry, that page was not found.');
   }
 
   // res.end(archive.paths.list);
