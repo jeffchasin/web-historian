@@ -30,6 +30,7 @@ describe('server', function() {
       it('should return the content of a website from the archive', function (done) {
         var fixtureName = 'www.google.com';
         var fixturePath = archive.paths.archivedSites + '/' + fixtureName;
+        // http://127.0.0.1:8080/sites/www.google.com/
 
         // Create or clear the file.
         var fd = fs.openSync(fixturePath, 'w');
