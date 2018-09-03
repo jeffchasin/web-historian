@@ -59,21 +59,11 @@ exports.addUrlToList = function(url, callback) {
 
 exports.isUrlArchived = function(url, callback) {
 
-  // console.log('url: ', url);
-  // if ( fs.Stats(exports.paths.archivedSites + '/' + url ) ) {
-  //   console.log('Directory: ', fs.stat(exports.paths.archivedSites + '/' + url ))
-  //   return fs.Stats(exports.paths.archivedSites + '/' + url ).isDirectory();
-  // }
-  // return false;
-  // TODO: WHAT IS UP WITH STAT??
-  fs.stat(exports.paths.archivedSites + '/' + url, function(err, stats) {
-    if (err) {
-      console.log('fs.stat err: ', err);
-    }
-    console.log('fs.stat path: ', exports.paths.archivedSites + '/' + url);
-    console.log('stats: ', stats);
-    return stats.isDirectory();
+  var myDir = exports.paths.archivedSites + '/' + url;
+  fs.access(myDir, function(err) {
+    return err ? false : true;
   });
+
 };
 
 exports.downloadUrls = function(urls) {
