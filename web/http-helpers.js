@@ -48,21 +48,22 @@ exports.serveAssets = function (res, asset, callback) {
       // res.write(temp);
       res.end(temp);
     });
-  } else {
-    var archiveDomain = asset;
-    console.log('archiveDomain', archiveDomain);
-    res.writeHead(200, exports.headers);
-    fs.readFile(archive.paths.archivedSites + '/' + archiveDomain + '/index.html', 'utf8', (err, data) => {
-    // fs.readFile(archive.paths.archivedSites + '/' + archiveDomain + '/index.html', 'utf8', (err, data) => {
-      if (err) {
-        console.error('archiveDomain err: ', err);
-      }
-      var temp = '';
-      temp += data;
-      // res.write(temp)
-      res.end(temp);
-    });
   }
+  // else {
+  // var archiveDomain = asset;
+  // console.log('archiveDomain', archiveDomain);
+  // res.writeHead(200, exports.headers);
+  // fs.readFile(archive.paths.archivedSites + '/' + archiveDomain + '/index.html', 'utf8', (err, data) => {
+  // // fs.readFile(archive.paths.archivedSites + '/' + archiveDomain + '/index.html', 'utf8', (err, data) => {
+  //   if (err) {
+  //     console.error('archiveDomain err: ', err);
+  //   }
+  //   var temp = '';
+  //   temp += data;
+  //   // res.write(temp)
+  //   res.end(temp);
+  // });
+  // }
 };
 
 // As you progress, keep thinking about what helper functions you can put here!

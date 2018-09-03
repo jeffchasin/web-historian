@@ -47,7 +47,7 @@ exports.isUrlInList = function(url, callback) {
 
 exports.addUrlToList = function(url, callback) {
   if (!exports.isUrlInList(url)) {
-    fs.appendFile(exports.paths.list, url, (err) => {
+    fs.appendFile(exports.paths.list, url + '\n', (err) => {
       if (err) {
         console.error('addUrlToList err', err);
       } else {
@@ -58,12 +58,14 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
-
-  var myDir = exports.paths.archivedSites + '/' + url;
-  fs.access(myDir, function(err) {
-    return err ? false : true;
+  var myFile = exports.paths.archivedSites + '/' + url;
+  fs.readFile(myFile, function(err, data) {
+    if (err) {
+      callback(false);
+    } else {
+      callback(true);
+    }
   });
-
 };
 
 exports.downloadUrls = function(urls) {
