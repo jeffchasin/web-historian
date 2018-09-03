@@ -22,25 +22,37 @@ exports.handleRequest = function (req, res) {
     if (req.method.toUpperCase() === 'GET') {
       // if we're here, they want the home page
       httpHelpers.serveAssets(res, 'homePage');
-      // statusCode = 200;
-      // res.writeHead(statusCode, httpHelpers.headers);
-
-      // fs.readFile(__dirname + '/public/index.html', (err, data) => {
-      //   if (err) { throw err; }
-      //   var temp = '';
-      //   temp += data;
-      //   res.end(temp);
-      // });
     }
 
     if (req.method.toUpperCase() === 'POST') {
-
+      // check for the url they want
+      var siteUrl;
+      req.on('data', data => {
+        var input = '';
+        input += data;
+        input = input.split('=');
+        siteUrl = input[1];
+        //console.log(siteUrl);
+      }).on('end', () => {
+        // see if that's in our archived sites
+        if (archive.isUrlArchived(siteUrl)) {
+          // if archived, send back the right page
+          httpHelpers.serveAssets(res, siteUrl);
+        } else {
+          // if not archived, is it in the list?
+          if (!archive.isUrlInList(siteUrl)) {
+            //console.log('siteUrl: ', siteUrl);
+            archive.addUrlToList(siteUrl);
+          }
+          // TODO: httpHelpers.serveAssets(res, 'loading');
+          // respond with loading.html
+        }
+      });
     }
-    // ../archives/sites/site-name
-    // http://127.0.0.1:8080/sites /www.google.com/
+
 
   } else if (req.url === archive.paths.archivedSites + '/site-name/') {
-
+    httpHelpers.serveAssets(res, 'homePage');
     // TODO: do stuff here
   } else if (req.url === '/styles.css') {
     httpHelpers.serveAssets(res, 'css');
