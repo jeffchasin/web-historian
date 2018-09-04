@@ -44,19 +44,24 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
-  if (!exports.isUrlInList(url)) {
-    fs.appendFile(this.paths.list, url + '\n', (err) => {
-      if (err) {
-        console.error('addUrlToList err', err);
-      } else {
-        return true;
-      }
-    });
-  }
+  this.isUrlInList(url, function(included) {
+    console.log('included: ', included);
+    if (included) {
+      callback(included);
+    } else {
+      fs.appendFile(exports.paths.list, url + '\n', (err) => {
+        if (err) {
+          console.error('addUrlToList err', err);
+        } else {
+          callback(included);
+        }
+      });
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
-  var myFile = this.paths.archivedSites + '/' + url;
+  var myFile = exports.paths.archivedSites + '/' + url;
   fs.readFile(myFile, function(err, data) {
     if (err) {
       callback(false);
