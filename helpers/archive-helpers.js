@@ -72,9 +72,6 @@ exports.isUrlArchived = function (url, callback) {
 exports.downloadUrls = function (urls) {
   urls.forEach(function (url) {
     request('http://' + url, function (error, response, body) {
-      // console.log('error:', error); // Print the error if one occurred
-      // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      // console.log('body:', body); // Print the HTML for the Google homepage.
       fs.writeFile(exports.paths.archivedSites + '/' + url, body, 'utf8', (err) => {
         if (err) {
           console.error('writeFile err: ', err);
