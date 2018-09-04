@@ -27,7 +27,6 @@ exports.initialize = function(pathsObj) {
 
 exports.readListOfUrls = function(callback) {
   fs.readFile(this.paths.list, 'utf8', (err, data) => {
-    console.log('data: ', data);
     if (err) {
       console.error('readListOfUrls err: ', err);
     }
@@ -45,13 +44,11 @@ exports.isUrlInList = function(url, callback) {
 
 exports.addUrlToList = function(url, callback) {
   this.isUrlInList(url, function(included) {
-    console.log('included: ', included);
     if (included) {
       callback(included);
     } else {
       fs.appendFile(exports.paths.list, url + '\n', (err) => {
         if (err) {
-          console.error('addUrlToList err', err);
         } else {
           callback(included);
         }
