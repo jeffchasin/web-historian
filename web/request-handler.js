@@ -53,10 +53,6 @@ exports.handleRequest = function (req, res) {
       fs.appendFile(archive.paths.list, siteUrl + '\n', 'utf8', (err) => {
         if (err) {
           console.error('appendFile err', err);
-        } else {
-          console.log('siteUrl: ', siteUrl);
-          console.log('apl: ', archive.paths.list);
-          // httpHelpers.serveAssets(res, siteUrl);
         }
       });
       res.writeHead(302, { 'Content-Type': 'text/plain' });

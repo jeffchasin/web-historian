@@ -26,28 +26,26 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
-  var fileContents = fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+  fs.readFile(this.paths.list, 'utf8', (err, data) => {
+    console.log('data: ', data);
     if (err) {
       console.error('readListOfUrls err: ', err);
     }
-    var temp = '';
-    temp += data;
-    return temp;
+    var annoyingTestFormat = data.split('\n'); //[url1, url2]
+    callback(annoyingTestFormat);
   });
-  return fileContents;
 };
 
 exports.isUrlInList = function(url, callback) {
-  var contents = exports.readListOfUrls();
-  if (!contents) { return false; }
-  var listArray = contents.split('\n');
-  var listSet = new Set(listArray);
-  return listSet.has(url);
+  // is url in the list?
+  this.readListOfUrls(function(atf) {
+    callback(atf.includes(url));
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
   if (!exports.isUrlInList(url)) {
-    fs.appendFile(exports.paths.list, url + '\n', (err) => {
+    fs.appendFile(this.paths.list, url + '\n', (err) => {
       if (err) {
         console.error('addUrlToList err', err);
       } else {
@@ -58,7 +56,7 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
-  var myFile = exports.paths.archivedSites + '/' + url;
+  var myFile = this.paths.archivedSites + '/' + url;
   fs.readFile(myFile, function(err, data) {
     if (err) {
       callback(false);
