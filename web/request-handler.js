@@ -50,16 +50,41 @@ exports.handleRequest = function (req, res) {
       input = input.split('=');
       siteUrl = input[1];
     }).on('end', () => {
-      fs.appendFile(archive.paths.list, siteUrl + '\n', 'utf8', (err) => {
-        if (err) {
-          console.error('appendFile err', err);
+
+      // do we have this siteUrl in the archive?
+      archive.isUrlArchived(siteUrl, function (urlExists) {
+        if (urlExists) {
+          fs.readFile(archive.paths.archivedSites + '/' + siteUrl, 'utf8', (err, data) => {
+            // fs.readFile(archive.paths.archivedSites + '/' + archiveDomain + '/index.html', 'utf8', (err, data) => {
+            if (err) {
+              // console.error('GET of req.url not in archive. err: ', err);
+              res.writeHead(404, httpHelpers.headers);
+              res.end('404 Error: Sorry, that page was not found.');
+            }
+            var temp = '';
+            temp += data;
+            res.writeHead(200, httpHelpers.headers);
+            res.end(temp);
+          });
+        } else {
+          httpHelpers.serveAssets(res, 'loading');
+          archive.addUrlToList(siteUrl, function(included) {
+            // TODO: YOU ARE HERE -------------------------------------- ******
+            return included; // this return does nothing! Fake return.
+          });
         }
       });
-      res.writeHead(302, { 'Content-Type': 'text/plain' });
-      res.end();
     });
-    // res.end(archive.paths.list);
+
+    // fs.appendFile(archive.paths.list, siteUrl + '\n', 'utf8', (err) => {
+    //   if (err) {
+    //     console.error('appendFile err', err);
+    //   }
+    // });
+    // res.writeHead(302, { 'Content-Type': 'text/plain' });
+    // res.end();
   }
+  // res.end(archive.paths.list);
 };
 
 

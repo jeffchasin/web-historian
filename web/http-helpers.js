@@ -48,6 +48,18 @@ exports.serveAssets = function (res, asset, callback) {
       // res.write(temp);
       res.end(temp);
     });
+  } else if (asset = 'loading') {
+    res.writeHead(200, exports.headers);
+
+    fs.readFile(__dirname + '/public/loading.html', 'utf8', (err, data) => {
+      if (err) {
+        console.error('loading.html err: ', err);
+      }
+      var temp = '';
+      temp += data;
+      // res.write(temp);
+      res.end(temp);
+    });
   }
   // else {
   // var archiveDomain = asset;
