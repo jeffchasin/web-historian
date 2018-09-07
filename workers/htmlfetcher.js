@@ -3,7 +3,7 @@
 var archiveHelpers = require('../helpers/archive-helpers');
 
 exports.htmlFetcher = function () {
-  archiveHelpers.readListOfUrls(function (urls) {
+  archiveHelpers.readListOfUrls().then(function(urls) {
     archiveHelpers.downloadUrls(urls);
   });
 };

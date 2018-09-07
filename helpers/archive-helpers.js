@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var request = require('request');
+var Promise = require('bluebird');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -26,55 +27,75 @@ exports.initialize = function (pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function (callback) {
-  fs.readFile(this.paths.list, 'utf8', (err, data) => {
-    if (err) {
-      console.error('readListOfUrls err: ', err);
-    }
-    var annoyingTestFormat = data.split('\n'); //[url1, url2]
-    callback(annoyingTestFormat);
+exports.readListOfUrls = function () {
+  return new Promise(function (resolve, reject) {
+    fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      var annoyingTestFormat = data.split('\n'); //[url1, url2]
+      resolve(annoyingTestFormat);
+    });
   });
 };
 
-exports.isUrlInList = function (url, callback) {
+exports.isUrlInList = function (url) {
   // is url in the list?
-  this.readListOfUrls(function (atf) {
-    callback(atf.includes(url));
+  return new Promise((resolve, reject) => exports.readListOfUrls()
+    .then(results => resolve(results.includes(url)))
+
+    // exports.readListOfUrls(function (atf) {
+    //   resolve(atf.includes(url));
+    // });
+  );
+};
+
+// quick test from Rupa:
+//exports.isUrlInList('www.google.com').then((results) => console.log('isUrlInList: ', results));
+
+
+exports.addUrlToList = function (url) {
+  return new Promise(function (resolve, reject) {
+    exports.isUrlInList(url, function (included) {
+      if (included) {
+        resolve(included);
+      } else {
+        fs.appendFile(exports.paths.list, url + '\n', (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(included);
+          }
+        });
+      }
+    });
   });
 };
 
-exports.addUrlToList = function (url, callback) {
-  this.isUrlInList(url, function (included) {
-    if (included) {
-      callback(included);
-    } else {
-      fs.appendFile(exports.paths.list, url + '\n', (err) => {
-        if (err) {
-        } else {
-          callback(included);
-        }
-      });
-    }
-  });
-};
-
-exports.isUrlArchived = function (url, callback) {
-  var myFile = exports.paths.archivedSites + '/' + url;
-  fs.readFile(myFile, function (err) {
-    if (err) {
-      callback(false);
-    } else {
-      callback(true);
-    }
+exports.isUrlArchived = function (url) {
+  return new Promise(function (resolve, reject) {
+    var myFile = exports.paths.archivedSites + '/' + url;
+    fs.readFile(myFile, function (err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
   });
 };
 
 exports.downloadUrls = function (urls) {
+  // console.log('urlsArray: ', urls);
   urls.forEach(function (url) {
     request('http://' + url, function (error, response, body) {
       fs.writeFile(exports.paths.archivedSites + '/' + url, body, 'utf8', (err) => {
         if (err) {
-          console.error('writeFile err: ', err);
+          // return;
+          // console.log('url: ', url);
+          // console.log('body', body);
+          // console.log('exports.paths.archivedSites: ', exports.paths.archivedSites + '/' + url);
+          // console.error('writeFile err: ', err);
         }
       });
     });

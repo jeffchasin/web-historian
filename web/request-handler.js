@@ -3,6 +3,7 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 var httpHelpers = require('./http-helpers');
+var fetcher = require('../workers/htmlfetcher');
 
 exports.handleRequest = function (req, res) {
 
@@ -61,9 +62,11 @@ exports.handleRequest = function (req, res) {
               res.writeHead(404, httpHelpers.headers);
               res.end('404 Error: Sorry, that page was not found.');
             }
-            archive.addUrlToList(siteUrl, function(included) {
-              return included; // this return does nothing! Fake return.
-            });
+            if (siteUrl !== undefined) {
+              archive.addUrlToList(siteUrl, function (included) {
+                return included; // this return does nothing! Fake return.
+              });
+            }
             var temp = '';
             temp += data;
             res.writeHead(302, httpHelpers.headers);
@@ -72,9 +75,9 @@ exports.handleRequest = function (req, res) {
         } else {
           httpHelpers.serveAssets(res, 'loading');
           // TODO: Broken test, still works in the app
-          archive.addUrlToList(siteUrl, function(included) {
+          archive.addUrlToList(siteUrl, function (included) {
             if (included) {
-              return siteUrl;
+              fetcher.htmlFetcher();
             }
           });
         }
